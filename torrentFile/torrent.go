@@ -3,6 +3,7 @@ package torrentfile
 import (
 	"bytes"
 	"crypto/sha1"
+	"fmt"
 	"io"
 	"net/url"
 	"os"
@@ -18,9 +19,9 @@ type torrentInfo struct {
 	Name        string `bencode:"name"`
 }
 type torrentFile struct {
-	Announce string       `bencode:"announce"`
-	Comment  string       `bencode:"comment"`
-	Info     *torrentInfo `becode:"info"`
+	Announce string      `bencode:"announce"`
+	Comment  string      `bencode:"comment"`
+	Info     torrentInfo `bencode:"info"`
 }
 type Torrent struct {
 	Announce    string
@@ -72,8 +73,9 @@ func openFile(r io.Reader) (*torrentFile, error) {
 	return &torrentFile, nil
 }
 
-func hashInfo(info *torrentInfo) ([20]byte, error) {
+func hashInfo(info torrentInfo) ([20]byte, error) {
 	var buffer bytes.Buffer
+	fmt.Printf("Info: %v", info.Name)
 	err := bencode.Marshal(&buffer, info)
 	if err != nil {
 		return [20]byte{}, err

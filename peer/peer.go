@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net"
+	"strconv"
 )
 
 type Peer struct {
@@ -38,6 +39,12 @@ type Message struct {
 }
 type Bitfield []byte
 
+func (p *Peer) GetAddress() string {
+	var address string
+	port := strconv.FormatUint(uint64(p.Port), 10)
+	address = p.IP.String() + ":" + port
+	return address
+}
 func (bf Bitfield) HasPiece(index int) bool {
 	byteIndex := index / 8
 	offset := index % 8

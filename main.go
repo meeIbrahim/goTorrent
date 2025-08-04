@@ -3,8 +3,12 @@ package main
 import (
 	"crypto/rand"
 	"fmt"
+	"goTorrent/client"
+	"goTorrent/peer"
 	torrentfile "goTorrent/torrentFile"
+	"io"
 	"net"
+	"time"
 )
 
 func main() {
@@ -26,6 +30,28 @@ func main() {
 	}
 
 	for i := 0; i < len(peers); i++ {
-		fmt.Println(peers[i].IP)
+		thePeer := peers[i]
+		conn, err := net.DialTimeout("tcp", thePeer.GetAddress(), 3*time.Second)
+		if err != nil {
+			continue
+		}
+		handshakeMessage := peer.Handshake{}
+		handshakeMessage.Pstr = "BitTorrent protocol"
+		handshakeMessage.PeerID = client.GetClient().Id
+		handshakeMessage.InfoHash = torrent.InfoHash
+
+		handshakeSerialized := handshakeMessage.Serialize()
+		conn.Write(handshakeSerialized)
+		resp, err := peer.ReadHandShake(conn)
+		fmt.Printf("Output %+v \n", resp)
+		if err != nil {
+			if err == io.EOF {
+				// Resp
+			} else {
+				message := fmt.Errorf("Error in Response\n%v\n", err)
+				fmt.Print(message)
+				continue
+			}
+		}
 	}
 }

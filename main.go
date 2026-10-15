@@ -55,3 +55,7 @@ func main() {
 		}
 	}
 }
+
+func printError (err error) {
+		fmt.Errorf("Error in Response %v", err)
+	}

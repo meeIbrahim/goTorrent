@@ -15,7 +15,7 @@ func main() {
 	torrent, err := torrentfile.GetTorrent("/home/ibrahim/Documents/debian.torrent")
 	listener, err := net.Listen("tcp", "127.0.0.1:0")
 	if err != nil {
-		fmt.Println("Error listening:", err)
+		printError(err)
 		return
 	}
 
@@ -48,7 +48,7 @@ func main() {
 			if err == io.EOF {
 				// Resp
 			} else {
-				message := fmt.Errorf("Error in Response\n%v\n", err)
+				message := printError(err)
 				fmt.Print(message)
 				continue
 			}
